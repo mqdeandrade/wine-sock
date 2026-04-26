@@ -156,6 +156,58 @@ h3 {
   gap: 12px;
 }
 
+.answer-picker {
+  display: grid;
+  gap: 10px;
+  max-height: 42vh;
+  overflow: auto;
+  padding-right: 2px;
+}
+
+.answer-option {
+  display: grid;
+  gap: 8px;
+  border: 1px solid rgba(255, 245, 233, 0.14);
+  border-radius: 22px;
+  background: rgba(255, 248, 237, 0.92);
+  color: #251715;
+  padding: 14px;
+  text-align: left;
+}
+
+.answer-option span {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.answer-option small {
+  color: #8b4e39;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.answer-option em {
+  color: #57352f;
+  font-style: normal;
+  line-height: 1.42;
+}
+
+.answer-option.selected {
+  outline: 3px solid #ffc78f;
+  background: #fff0d8;
+}
+
+.selected-answer,
+.empty-state {
+  margin: 0;
+  border-radius: 18px;
+  background: rgba(255, 248, 237, 0.12);
+  color: #fff5e9;
+  padding: 12px;
+}
+
 .code-pill {
   display: grid;
   gap: 2px;

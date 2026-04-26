@@ -59,6 +59,17 @@ function varietalName(varietals: VarietalSummary[], varietalId: string | null) {
   return varietals.find((varietal) => varietal.id === varietalId)?.name ?? "Unknown";
 }
 
+function matchesVarietalSearch(varietal: VarietalSummary, searchTerm: string) {
+  const search = searchTerm.trim().toLowerCase();
+  if (!search) {
+    return true;
+  }
+
+  return `${varietal.name} ${varietal.notes} ${varietal.commonDescriptors.join(" ")} ${varietal.typicalRegions.join(" ")}`
+    .toLowerCase()
+    .includes(search);
+}
+
 function buildJoinLink(code: string) {
   const url = new URL(window.location.href);
   url.search = "";
@@ -100,6 +111,7 @@ function App() {
   const [selectedVarietalId, setSelectedVarietalId] = useState("");
   const [answerVarietalId, setAnswerVarietalId] = useState("");
   const [filter, setFilter] = useState("");
+  const [answerFilter, setAnswerFilter] = useState("");
   const [copyStatus, setCopyStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [inviteLoading, setInviteLoading] = useState(Boolean(inviteCode));
@@ -111,16 +123,8 @@ function App() {
   const hasLockedGuess = Boolean(
     participant && round?.guesses.some((guess) => guess.participantId === participant.id),
   );
-  const filteredVarietals = varietals.filter((varietal) => {
-    const search = filter.trim().toLowerCase();
-    if (!search) {
-      return true;
-    }
-
-    return `${varietal.name} ${varietal.notes} ${varietal.commonDescriptors.join(" ")}`
-      .toLowerCase()
-      .includes(search);
-  });
+  const filteredVarietals = varietals.filter((varietal) => matchesVarietalSearch(varietal, filter));
+  const answerVarietals = varietals.filter((varietal) => matchesVarietalSearch(varietal, answerFilter));
 
   useEffect(() => {
     fetchVarietals()
@@ -247,6 +251,7 @@ function App() {
       await startRound(tasting.id, hostToken);
       setSelectedVarietalId("");
       setAnswerVarietalId("");
+      setAnswerFilter("");
     });
   }
 
@@ -411,8 +416,11 @@ function App() {
               tasting={tasting}
               round={round}
               varietals={varietals}
+              filteredAnswerVarietals={answerVarietals}
+              answerFilter={answerFilter}
               answerVarietalId={answerVarietalId}
               busy={busy}
+              onAnswerFilterChange={setAnswerFilter}
               onAnswerChange={setAnswerVarietalId}
               onStartRound={handleStartRound}
               onCloseGuessing={handleCloseGuessing}
@@ -472,8 +480,11 @@ interface HostPanelProps {
   tasting: TastingSummary;
   round: RoundSummary | null;
   varietals: VarietalSummary[];
+  filteredAnswerVarietals: VarietalSummary[];
+  answerFilter: string;
   answerVarietalId: string;
   busy: boolean;
+  onAnswerFilterChange: (value: string) => void;
   onAnswerChange: (value: string) => void;
   onStartRound: () => void;
   onCloseGuessing: () => void;
@@ -485,8 +496,11 @@ function HostPanel({
   tasting,
   round,
   varietals,
+  filteredAnswerVarietals,
+  answerFilter,
   answerVarietalId,
   busy,
+  onAnswerFilterChange,
   onAnswerChange,
   onStartRound,
   onCloseGuessing,
@@ -512,16 +526,37 @@ function HostPanel({
       {round?.status === "awaiting_answer" && (
         <div className="answer-box">
           <label>
-            Correct varietal
-            <select value={answerVarietalId} onChange={(event) => onAnswerChange(event.target.value)}>
-              <option value="">Choose the revealed bottle</option>
-              {varietals.map((varietal) => (
-                <option key={varietal.id} value={varietal.id}>
-                  {varietal.name}
-                </option>
-              ))}
-            </select>
+            Search correct varietal
+            <input
+              placeholder="Try pinotage, pepper, lemon..."
+              value={answerFilter}
+              onChange={(event) => onAnswerFilterChange(event.target.value)}
+            />
           </label>
+          <div className="answer-picker">
+            {filteredAnswerVarietals.map((varietal) => (
+              <button
+                className={answerVarietalId === varietal.id ? "answer-option selected" : "answer-option"}
+                key={varietal.id}
+                type="button"
+                onClick={() => onAnswerChange(varietal.id)}
+              >
+                <span>
+                  <strong>{varietal.name}</strong>
+                  <small>{varietal.color}</small>
+                </span>
+                <em>{varietal.notes}</em>
+              </button>
+            ))}
+            {filteredAnswerVarietals.length === 0 && (
+              <p className="empty-state">No varietals match that search.</p>
+            )}
+          </div>
+          {answerVarietalId && (
+            <p className="selected-answer">
+              Correct answer selected: <strong>{varietalName(varietals, answerVarietalId)}</strong>
+            </p>
+          )}
           <button className="primary" disabled={busy || !answerVarietalId} onClick={onRevealRound}>
             Reveal results
           </button>
