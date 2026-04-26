@@ -195,8 +195,8 @@ h3 {
 }
 
 .answer-option.selected {
-  outline: 3px solid #ffc78f;
   background: #fff0d8;
+  box-shadow: inset 0 0 0 3px #ffc78f;
 }
 
 .selected-answer,
@@ -322,8 +322,8 @@ h3 {
 }
 
 .varietal.selected {
-  outline: 3px solid #84232d;
   background: #fff0d8;
+  box-shadow: inset 0 0 0 3px #84232d;
 }
 
 .sticky-action {
