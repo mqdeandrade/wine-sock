@@ -168,14 +168,19 @@ function App() {
     }
   }
 
-  async function openTastingFromCode(code: string, options?: { restoreHost?: boolean }) {
+  function setCurrentTastingUrl(code: string) {
+    window.history.replaceState(null, "", buildJoinLink(code));
+  }
+
+  async function openTastingFromCode(code: string) {
     const normalizedCode = code.trim().toUpperCase();
     const fetched = await fetchTasting(normalizedCode);
-    setHostToken(options?.restoreHost ? localStorage.getItem(hostStorageKey(normalizedCode)) : null);
+    setHostToken(localStorage.getItem(hostStorageKey(normalizedCode)));
     setParticipant(loadParticipantSession(normalizedCode));
     setJoinCode(normalizedCode);
     setHistoryCode(normalizedCode);
     setTasting(fetched.tasting);
+    setCurrentTastingUrl(normalizedCode);
   }
 
   async function handleOpenInvite() {
@@ -205,6 +210,8 @@ function App() {
       setParticipant(null);
       setTasting(created.tasting);
       setJoinCode(created.tasting.code);
+      setHistoryCode(created.tasting.code);
+      setCurrentTastingUrl(created.tasting.code);
     });
   }
 
@@ -228,17 +235,17 @@ function App() {
       const joined = await joinTasting(code, name);
       const session = saveParticipantSession(code, joined);
       const fetched = await fetchTasting(code);
-      setHostToken(localStorage.getItem(hostStorageKey(code)));
+      setHostToken(null);
       setParticipant(session);
       setTasting(fetched.tasting);
-      window.history.replaceState(null, "", buildJoinLink(code));
+      setCurrentTastingUrl(code);
     });
   }
 
   async function handleLoadTasting() {
     await run(async () => {
       const code = historyCode.trim().toUpperCase();
-      await openTastingFromCode(code, { restoreHost: true });
+      await openTastingFromCode(code);
     });
   }
 
