@@ -6,6 +6,7 @@ build/
 !.env.example
 .DS_Store
 coverage/
+test-results/
 *.log
 *.tsbuildinfo
 prisma/dev.db

@@ -15,7 +15,13 @@ const io = new Server(httpServer, {
 });
 
 const app = createApp(io);
-httpServer.on("request", app);
+httpServer.on("request", (request, response) => {
+  if (request.url?.startsWith("/socket.io/")) {
+    return;
+  }
+
+  app(request, response);
+});
 
 io.on("connection", (socket) => {
   socket.emit("connected", { socketId: socket.id });

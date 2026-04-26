@@ -89,11 +89,12 @@ async function copyTextToClipboard(text: string) {
 }
 
 function App() {
+  const [inviteCode] = useState(initialJoinCode);
   const [varietals, setVarietals] = useState<VarietalSummary[]>([]);
   const [tasting, setTasting] = useState<TastingSummary | null>(null);
   const [hostToken, setHostToken] = useState<string | null>(null);
   const [participant, setParticipant] = useState<ParticipantSession | null>(null);
-  const [joinCode, setJoinCode] = useState(initialJoinCode);
+  const [joinCode, setJoinCode] = useState(inviteCode);
   const [historyCode, setHistoryCode] = useState("");
   const [name, setName] = useState("");
   const [selectedVarietalId, setSelectedVarietalId] = useState("");
@@ -101,6 +102,8 @@ function App() {
   const [filter, setFilter] = useState("");
   const [copyStatus, setCopyStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [inviteLoading, setInviteLoading] = useState(Boolean(inviteCode));
+  const [inviteFailed, setInviteFailed] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const round = latestRound(tasting);
@@ -126,20 +129,12 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const code = initialJoinCode();
-    if (!code) {
+    if (!inviteCode) {
       return;
     }
 
-    run(async () => {
-      const fetched = await fetchTasting(code);
-      setHostToken(null);
-      setParticipant(loadParticipantSession(code));
-      setJoinCode(code);
-      setHistoryCode(code);
-      setTasting(fetched.tasting);
-    });
-  }, []);
+    void handleOpenInvite();
+  }, [inviteCode]);
 
   useEffect(() => {
     if (!tasting) {
@@ -166,6 +161,35 @@ function App() {
       setError((caughtError as Error).message);
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function openTastingFromCode(code: string, options?: { restoreHost?: boolean }) {
+    const normalizedCode = code.trim().toUpperCase();
+    const fetched = await fetchTasting(normalizedCode);
+    setHostToken(options?.restoreHost ? localStorage.getItem(hostStorageKey(normalizedCode)) : null);
+    setParticipant(loadParticipantSession(normalizedCode));
+    setJoinCode(normalizedCode);
+    setHistoryCode(normalizedCode);
+    setTasting(fetched.tasting);
+  }
+
+  async function handleOpenInvite() {
+    if (!inviteCode) {
+      return;
+    }
+
+    setInviteLoading(true);
+    setInviteFailed(false);
+    setError(null);
+
+    try {
+      await openTastingFromCode(inviteCode);
+    } catch (caughtError) {
+      setInviteFailed(true);
+      setError((caughtError as Error).message);
+    } finally {
+      setInviteLoading(false);
     }
   }
 
@@ -210,11 +234,7 @@ function App() {
   async function handleLoadTasting() {
     await run(async () => {
       const code = historyCode.trim().toUpperCase();
-      const fetched = await fetchTasting(code);
-      setHostToken(localStorage.getItem(hostStorageKey(code)));
-      setParticipant(loadParticipantSession(code));
-      setTasting(fetched.tasting);
-      setJoinCode(code);
+      await openTastingFromCode(code, { restoreHost: true });
     });
   }
 
@@ -288,7 +308,42 @@ function App() {
       {error && <div className="error">{error}</div>}
       {copyStatus && <div className="notice">{copyStatus}</div>}
 
-      {!tasting ? (
+      {!tasting && inviteCode ? (
+        <section className="grid">
+          <article className="card feature-card">
+            <p className="eyebrow">Invite link</p>
+            <h2>{inviteLoading ? "Opening tasting" : "Could not open tasting"}</h2>
+            <p>
+              {inviteLoading
+                ? `Loading tasting ${inviteCode}.`
+                : "Check that the tasting exists and that the API server is reachable."}
+            </p>
+            {!inviteLoading && (
+              <button className="primary" disabled={busy} onClick={handleOpenInvite}>
+                Try again
+              </button>
+            )}
+          </article>
+
+          {inviteFailed && (
+            <article className="card">
+              <p className="eyebrow">Manual join</p>
+              <h2>Use the code</h2>
+              <label>
+                Tasting code
+                <input value={joinCode} onChange={(event) => setJoinCode(event.target.value)} />
+              </label>
+              <label>
+                Your name
+                <input value={name} onChange={(event) => setName(event.target.value)} />
+              </label>
+              <button className="primary" disabled={busy || !joinCode || !name} onClick={handleJoinTasting}>
+                Join
+              </button>
+            </article>
+          )}
+        </section>
+      ) : !tasting ? (
         <section className="grid">
           <article className="card feature-card">
             <p className="eyebrow">Host</p>
