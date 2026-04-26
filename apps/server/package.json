@@ -6,9 +6,13 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc -p tsconfig.json",
-    "typecheck": "tsc -p tsconfig.json --pretty false"
+    "typecheck": "tsc -p tsconfig.json --pretty false",
+    "prisma:generate": "prisma generate --schema prisma/schema.prisma",
+    "prisma:migrate": "prisma migrate dev --schema prisma/schema.prisma",
+    "db:seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@prisma/client": "^7.8.0",
     "@wine-sock/shared": "0.1.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
@@ -19,7 +23,11 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
     "@types/node": "^22.15.3",
+    "prisma": "^7.8.0",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   }
 }

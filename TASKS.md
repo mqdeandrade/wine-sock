@@ -9,10 +9,10 @@
 
 ## Vertical Slice 2: Persistence And Domain
 
-- [ ] Add Prisma schema for tastings, participants, rounds, guesses, and varietals.
-- [ ] Add database client and repository layer.
-- [ ] Seed exhaustive initial varietal list with tasting notes.
-- [ ] Add domain logic for scoring and round transitions.
+- [x] Add Prisma schema for tastings, participants, rounds, guesses, and varietals.
+- [x] Add database client and repository layer.
+- [x] Seed exhaustive initial varietal list with tasting notes.
+- [x] Add domain logic for scoring and round transitions.
 
 ## Vertical Slice 3: Backend API And Realtime Events
 

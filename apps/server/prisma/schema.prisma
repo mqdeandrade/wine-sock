@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum TastingStatus {
+  LOBBY
+  ACTIVE
+  COMPLETED
+}
+
+enum RoundStatus {
+  GUESSING
+  AWAITING_ANSWER
+  REVEALED
+}
+
+enum VarietalColor {
+  RED
+  WHITE
+  ROSE
+  SPARKLING
+  DESSERT
+}
+
+model Tasting {
+  id            String        @id @default(cuid())
+  code          String        @unique
+  hostTokenHash String
+  status        TastingStatus @default(LOBBY)
+  createdAt     DateTime      @default(now())
+  startedAt     DateTime?
+  completedAt   DateTime?
+  participants  Participant[]
+  rounds        Round[]
+}
+
+model Participant {
+  id               String   @id @default(cuid())
+  tastingId        String
+  tasting          Tasting  @relation(fields: [tastingId], references: [id], onDelete: Cascade)
+  name             String
+  sessionTokenHash String
+  joinedAt         DateTime @default(now())
+  guesses          Guess[]
+
+  @@unique([tastingId, name])
+}
+
+model Round {
+  id                String      @id @default(cuid())
+  tastingId         String
+  tasting           Tasting     @relation(fields: [tastingId], references: [id], onDelete: Cascade)
+  roundNumber       Int
+  status            RoundStatus @default(GUESSING)
+  correctVarietalId String?
+  correctVarietal   Varietal?   @relation(fields: [correctVarietalId], references: [id])
+  startedAt         DateTime    @default(now())
+  guessingClosedAt  DateTime?
+  revealedAt        DateTime?
+  guesses           Guess[]
+
+  @@unique([tastingId, roundNumber])
+}
+
+model Guess {
+  id            String      @id @default(cuid())
+  roundId       String
+  round         Round       @relation(fields: [roundId], references: [id], onDelete: Cascade)
+  participantId String
+  participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  varietalId    String
+  varietal      Varietal    @relation(fields: [varietalId], references: [id])
+  lockedAt      DateTime    @default(now())
+  isCorrect     Boolean?
+
+  @@unique([roundId, participantId])
+}
+
+model Varietal {
+  id                String        @id
+  name              String        @unique
+  color             VarietalColor
+  notes             String
+  commonDescriptors String[]
+  typicalRegions    String[]
+  aliases           String[]
+  rounds            Round[]
+  guesses           Guess[]
+}

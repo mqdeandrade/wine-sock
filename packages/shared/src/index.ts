@@ -11,3 +11,42 @@ export interface VarietalSummary {
   commonDescriptors: string[];
   typicalRegions: string[];
 }
+
+export interface ParticipantSummary {
+  id: string;
+  name: string;
+  joinedAt: string;
+}
+
+export interface GuessSummary {
+  participantId: string;
+  varietalId: string;
+  lockedAt: string;
+  isCorrect: boolean | null;
+}
+
+export interface RoundSummary {
+  id: string;
+  roundNumber: number;
+  status: RoundStatus;
+  correctVarietalId: string | null;
+  startedAt: string;
+  guessingClosedAt: string | null;
+  revealedAt: string | null;
+  guesses: GuessSummary[];
+}
+
+export interface LeaderboardEntry {
+  participantId: string;
+  name: string;
+  score: number;
+}
+
+export interface TastingSummary {
+  id: string;
+  code: string;
+  status: TastingStatus;
+  participants: ParticipantSummary[];
+  rounds: RoundSummary[];
+  leaderboard: LeaderboardEntry[];
+}
