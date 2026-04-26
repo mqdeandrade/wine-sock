@@ -1,7 +1,24 @@
-import "../src/env.js";
-import { Prisma, PrismaClient } from "@prisma/client";
+import { existsSync } from "node:fs";
+import { resolve } from "node:path";
+import { PrismaPg } from "@prisma/adapter-pg";
+import dotenv from "dotenv";
+import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
+const envPaths = [resolve(process.cwd(), ".env"), resolve(process.cwd(), "../..", ".env")];
+
+for (const envPath of envPaths) {
+  if (existsSync(envPath)) {
+    dotenv.config({ path: envPath });
+    break;
+  }
+}
+
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL is required.");
+}
+
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
+const prisma = new PrismaClient({ adapter });
 
 const varietals = [
   {
@@ -184,7 +201,7 @@ const varietals = [
     typicalRegions: ["Hunter Valley", "Bordeaux", "Margaret River", "Stellenbosch"],
     aliases: [],
   },
-] satisfies Prisma.VarietalCreateManyInput[];
+];
 
 async function main() {
   await prisma.varietal.createMany({
