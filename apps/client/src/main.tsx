@@ -695,10 +695,24 @@ function RoundHistory({
               {round.status === "revealed" &&
                 round.guesses.map((guess) => {
                   const participant = tasting.participants.find((entry) => entry.id === guess.participantId);
+                  const guessedVarietal = varietalName(varietals, guess.varietalId);
+                  const correctVarietal = varietalName(varietals, round.correctVarietalId);
                   return (
                     <div className="guess-row" key={`${round.id}-${guess.participantId}`}>
-                      <span>{participant?.name ?? "Unknown"}</span>
-                      <strong>{guess.isCorrect ? "Correct" : "Missed"}</strong>
+                      <div>
+                        <strong>{participant?.name ?? "Unknown"}</strong>
+                        <p>
+                          Guessed <b>{guessedVarietal}</b>
+                        </p>
+                        {!guess.isCorrect && (
+                          <p>
+                            Correct answer was <b>{correctVarietal}</b>
+                          </p>
+                        )}
+                      </div>
+                      <strong className={guess.isCorrect ? "result-correct" : "result-missed"}>
+                        {guess.isCorrect ? "Correct" : "Missed"}
+                      </strong>
                     </div>
                   );
                 })}

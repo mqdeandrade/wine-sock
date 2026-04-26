@@ -366,7 +366,26 @@ h3 {
 
 .guess-row {
   grid-template-columns: 1fr auto;
+  align-items: start;
   margin-top: 8px;
+}
+
+.guess-row p {
+  margin: 6px 0 0;
+  color: #5a3830;
+  line-height: 1.35;
+}
+
+.guess-row b {
+  color: #251715;
+}
+
+.result-correct {
+  color: #225236;
+}
+
+.result-missed {
+  color: #84232d;
 }
 
 .history-round {
