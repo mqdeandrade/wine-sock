@@ -59,17 +59,47 @@ function varietalName(varietals: VarietalSummary[], varietalId: string | null) {
   return varietals.find((varietal) => varietal.id === varietalId)?.name ?? "Unknown";
 }
 
+function buildJoinLink(code: string) {
+  const url = new URL(window.location.href);
+  url.search = "";
+  url.hash = "";
+  url.searchParams.set("code", code);
+  return url.toString();
+}
+
+function initialJoinCode() {
+  return new URLSearchParams(window.location.search).get("code")?.trim().toUpperCase() ?? "";
+}
+
+async function copyTextToClipboard(text: string) {
+  if (navigator.clipboard) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.opacity = "0";
+  document.body.append(textarea);
+  textarea.select();
+  document.execCommand("copy");
+  textarea.remove();
+}
+
 function App() {
   const [varietals, setVarietals] = useState<VarietalSummary[]>([]);
   const [tasting, setTasting] = useState<TastingSummary | null>(null);
   const [hostToken, setHostToken] = useState<string | null>(null);
   const [participant, setParticipant] = useState<ParticipantSession | null>(null);
-  const [joinCode, setJoinCode] = useState("");
+  const [joinCode, setJoinCode] = useState(initialJoinCode);
   const [historyCode, setHistoryCode] = useState("");
   const [name, setName] = useState("");
   const [selectedVarietalId, setSelectedVarietalId] = useState("");
   const [answerVarietalId, setAnswerVarietalId] = useState("");
   const [filter, setFilter] = useState("");
+  const [copyStatus, setCopyStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -93,6 +123,22 @@ function App() {
     fetchVarietals()
       .then(({ varietals: fetchedVarietals }) => setVarietals(fetchedVarietals))
       .catch((caughtError: unknown) => setError((caughtError as Error).message));
+  }, []);
+
+  useEffect(() => {
+    const code = initialJoinCode();
+    if (!code) {
+      return;
+    }
+
+    run(async () => {
+      const fetched = await fetchTasting(code);
+      setHostToken(null);
+      setParticipant(loadParticipantSession(code));
+      setJoinCode(code);
+      setHistoryCode(code);
+      setTasting(fetched.tasting);
+    });
   }, []);
 
   useEffect(() => {
@@ -134,6 +180,20 @@ function App() {
     });
   }
 
+  async function handleCopyJoinLink() {
+    if (!tasting) {
+      return;
+    }
+
+    const joinLink = buildJoinLink(tasting.code);
+
+    await run(async () => {
+      await copyTextToClipboard(joinLink);
+      setCopyStatus("Join link copied");
+      window.setTimeout(() => setCopyStatus(null), 2200);
+    });
+  }
+
   async function handleJoinTasting() {
     await run(async () => {
       const code = joinCode.trim().toUpperCase();
@@ -143,6 +203,7 @@ function App() {
       setHostToken(localStorage.getItem(hostStorageKey(code)));
       setParticipant(session);
       setTasting(fetched.tasting);
+      window.history.replaceState(null, "", buildJoinLink(code));
     });
   }
 
@@ -216,10 +277,16 @@ function App() {
           <p className="eyebrow">Blind tasting control room</p>
           <h1>Wine Sock</h1>
         </div>
-        {tasting && <span className="code-pill">{tasting.code}</span>}
+        {tasting && (
+          <button className="code-pill" type="button" onClick={handleCopyJoinLink}>
+            <span>{tasting.code}</span>
+            <small>{copyStatus ?? "Tap to copy link"}</small>
+          </button>
+        )}
       </section>
 
       {error && <div className="error">{error}</div>}
+      {copyStatus && <div className="notice">{copyStatus}</div>}
 
       {!tasting ? (
         <section className="grid">
@@ -318,6 +385,7 @@ function App() {
 
           {!isHost && !participant && tasting.status === "lobby" && (
             <article className="card">
+              <p className="eyebrow">Join {tasting.code}</p>
               <h2>Join this tasting</h2>
               <label>
                 Your name
@@ -326,6 +394,14 @@ function App() {
               <button className="primary" disabled={busy || !name} onClick={handleJoinTasting}>
                 Join {tasting.code}
               </button>
+            </article>
+          )}
+
+          {!isHost && !participant && tasting.status !== "lobby" && (
+            <article className="card">
+              <p className="eyebrow">Invite closed</p>
+              <h2>This tasting has already started</h2>
+              <p>New attendees can only join while the tasting is still in the lobby.</p>
             </article>
           )}
 

@@ -157,6 +157,8 @@ h3 {
 }
 
 .code-pill {
+  display: grid;
+  gap: 2px;
   border-radius: 999px;
   background: #241513;
   color: #fff4e4;
@@ -164,6 +166,15 @@ h3 {
   font-family: ui-sans-serif, system-ui, sans-serif;
   font-weight: 900;
   letter-spacing: 0.12em;
+  text-align: center;
+}
+
+.code-pill small {
+  color: #f0bf8b;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
 }
 
 .primary,
@@ -203,6 +214,17 @@ h3 {
   max-width: 980px;
   border-radius: 18px;
   background: #84232d;
+  color: #fff5e9;
+  padding: 12px 14px;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-weight: 750;
+}
+
+.notice {
+  margin: 0 auto 14px;
+  max-width: 980px;
+  border-radius: 18px;
+  background: #241513;
   color: #fff5e9;
   padding: 12px 14px;
   font-family: ui-sans-serif, system-ui, sans-serif;
