@@ -2,7 +2,7 @@ import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { PrismaPg } from "@prisma/adapter-pg";
 import dotenv from "dotenv";
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 
 const envPaths = [resolve(process.cwd(), ".env"), resolve(process.cwd(), "../..", ".env")];
 
@@ -201,7 +201,7 @@ const varietals = [
     typicalRegions: ["Hunter Valley", "Bordeaux", "Margaret River", "Stellenbosch"],
     aliases: [],
   },
-];
+] satisfies Prisma.VarietalCreateManyInput[];
 
 async function main() {
   await prisma.varietal.createMany({
