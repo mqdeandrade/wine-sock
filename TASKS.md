@@ -32,7 +32,7 @@
 
 ## Vertical Slice 5: Verification
 
-- [ ] Add unit tests for scoring and round lifecycle.
+- [x] Add unit tests for scoring and round lifecycle.
 - [ ] Add API integration tests for the primary tasting flow.
 - [ ] Add browser smoke test for host plus attendee flow.
-- [ ] Document any remaining deployment assumptions.
+- [x] Document any remaining deployment assumptions.
