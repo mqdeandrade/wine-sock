@@ -1,0 +1,38 @@
+# Wine Sock Task List
+
+## Vertical Slice 1: Project Scaffold
+
+- [x] Create npm workspace structure.
+- [x] Add client, server, and shared package placeholders.
+- [x] Add baseline TypeScript configuration.
+- [x] Document implementation plan and development commands.
+
+## Vertical Slice 2: Persistence And Domain
+
+- [ ] Add Prisma schema for tastings, participants, rounds, guesses, and varietals.
+- [ ] Add database client and repository layer.
+- [ ] Seed exhaustive initial varietal list with tasting notes.
+- [ ] Add domain logic for scoring and round transitions.
+
+## Vertical Slice 3: Backend API And Realtime Events
+
+- [ ] Implement tasting creation and join code generation.
+- [ ] Implement participant join with session tokens.
+- [ ] Implement round lifecycle endpoints.
+- [ ] Implement guess locking and reveal flow.
+- [ ] Add Socket.IO rooms and tasting update events.
+
+## Vertical Slice 4: Phone-First React App
+
+- [ ] Build create/join screens.
+- [ ] Build lobby and host controls.
+- [ ] Build varietal picker with notes.
+- [ ] Build locked-in, reveal, leaderboard, and history views.
+- [ ] Persist session tokens in local storage.
+
+## Vertical Slice 5: Verification
+
+- [ ] Add unit tests for scoring and round lifecycle.
+- [ ] Add API integration tests for the primary tasting flow.
+- [ ] Add browser smoke test for host plus attendee flow.
+- [ ] Document any remaining deployment assumptions.
