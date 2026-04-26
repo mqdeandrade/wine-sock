@@ -24,11 +24,11 @@
 
 ## Vertical Slice 4: Phone-First React App
 
-- [ ] Build create/join screens.
-- [ ] Build lobby and host controls.
-- [ ] Build varietal picker with notes.
-- [ ] Build locked-in, reveal, leaderboard, and history views.
-- [ ] Persist session tokens in local storage.
+- [x] Build create/join screens.
+- [x] Build lobby and host controls.
+- [x] Build varietal picker with notes.
+- [x] Build locked-in, reveal, leaderboard, and history views.
+- [x] Persist session tokens in local storage.
 
 ## Vertical Slice 5: Verification
 

@@ -1,7 +1,9 @@
 :root {
-  color: #271817;
-  background: #f4eadf;
-  font-family: ui-serif, Georgia, Cambria, "Times New Roman", serif;
+  color: #251715;
+  background: #f2dfc7;
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
 }
 
 * {
@@ -20,39 +22,316 @@ select {
   font: inherit;
 }
 
-.shell {
-  min-height: 100vh;
-  padding: 24px;
-  background:
-    radial-gradient(circle at top left, rgba(122, 29, 38, 0.2), transparent 34rem),
-    linear-gradient(145deg, #fbf4e8 0%, #ead8c4 45%, #bb7d62 100%);
+button {
+  border: 0;
+  cursor: pointer;
 }
 
-.hero {
-  margin: 0 auto;
-  max-width: 560px;
-  padding: 32px 0;
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+label {
+  display: grid;
+  gap: 8px;
+  color: #55342d;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+input,
+select {
+  width: 100%;
+  border: 1px solid rgba(61, 31, 25, 0.24);
+  border-radius: 18px;
+  background: rgba(255, 250, 242, 0.88);
+  color: #241513;
+  padding: 13px 14px;
+}
+
+.shell {
+  min-height: 100vh;
+  padding: 18px;
+  background:
+    radial-gradient(circle at 10% -10%, rgba(140, 26, 38, 0.34), transparent 22rem),
+    radial-gradient(circle at 100% 10%, rgba(238, 162, 98, 0.42), transparent 20rem),
+    linear-gradient(160deg, #fff4df 0%, #ebcfb3 54%, #9f564b 130%);
+}
+
+.masthead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 auto 18px;
+  max-width: 980px;
 }
 
 .eyebrow {
-  margin: 0 0 12px;
-  color: #7a1d26;
-  font-size: 0.78rem;
-  font-weight: 700;
+  margin: 0 0 8px;
+  color: #84232d;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 800;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
-h1 {
-  margin: 0;
-  font-size: clamp(3.6rem, 18vw, 7rem);
-  line-height: 0.85;
-  letter-spacing: -0.08em;
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
 }
 
-.hero p:last-child {
-  max-width: 26rem;
-  color: #50302b;
-  font-size: 1.18rem;
-  line-height: 1.5;
+h1 {
+  margin-bottom: 0;
+  font-size: clamp(3.4rem, 17vw, 6.5rem);
+  line-height: 0.82;
+  letter-spacing: -0.085em;
+}
+
+h2 {
+  margin-bottom: 12px;
+  font-size: 2rem;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+h3 {
+  margin-bottom: 6px;
+}
+
+.grid,
+.workspace {
+  display: grid;
+  gap: 14px;
+  margin: 0 auto;
+  max-width: 980px;
+}
+
+.card {
+  display: grid;
+  gap: 14px;
+  border: 1px solid rgba(69, 35, 28, 0.12);
+  border-radius: 30px;
+  background: rgba(255, 248, 237, 0.78);
+  box-shadow: 0 24px 70px rgba(67, 31, 25, 0.16);
+  padding: 22px;
+  backdrop-filter: blur(18px);
+}
+
+.feature-card {
+  min-height: 280px;
+  align-content: end;
+  background:
+    linear-gradient(145deg, rgba(80, 23, 27, 0.92), rgba(134, 43, 41, 0.84)),
+    radial-gradient(circle at top right, rgba(255, 218, 166, 0.45), transparent 16rem);
+  color: #fff4e4;
+}
+
+.feature-card .eyebrow,
+.feature-card p {
+  color: #ffd8b1;
+}
+
+.status-card {
+  grid-template-columns: 1fr auto;
+  align-items: center;
+}
+
+.host-card {
+  background: rgba(62, 32, 29, 0.9);
+  color: #fff5e9;
+}
+
+.host-card .eyebrow,
+.host-card label {
+  color: #ffc78f;
+}
+
+.answer-box {
+  display: grid;
+  gap: 12px;
+}
+
+.code-pill {
+  border-radius: 999px;
+  background: #241513;
+  color: #fff4e4;
+  padding: 10px 14px;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.primary,
+.secondary,
+.danger,
+.ghost {
+  width: 100%;
+  border-radius: 18px;
+  padding: 14px 16px;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-weight: 850;
+}
+
+.primary {
+  background: #84232d;
+  color: #fff7ed;
+}
+
+.secondary {
+  background: #e0a467;
+  color: #2f1a16;
+}
+
+.danger {
+  background: #241513;
+  color: #fff7ed;
+}
+
+.ghost {
+  width: auto;
+  background: rgba(36, 21, 19, 0.08);
+  color: #39211d;
+}
+
+.error {
+  margin: 0 auto 14px;
+  max-width: 980px;
+  border-radius: 18px;
+  background: #84232d;
+  color: #fff5e9;
+  padding: 12px 14px;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-weight: 750;
+}
+
+.varietal-list {
+  display: grid;
+  gap: 10px;
+  max-height: 52vh;
+  overflow: auto;
+  padding-bottom: 76px;
+}
+
+.varietal {
+  display: grid;
+  gap: 8px;
+  border: 1px solid rgba(58, 28, 22, 0.14);
+  border-radius: 22px;
+  background: #fff9ef;
+  color: #251715;
+  padding: 14px;
+  text-align: left;
+}
+
+.varietal span {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.varietal small {
+  color: #8b4e39;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.varietal em {
+  color: #57352f;
+  font-style: normal;
+  line-height: 1.42;
+}
+
+.varietal.selected {
+  outline: 3px solid #84232d;
+  background: #fff0d8;
+}
+
+.sticky-action {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  left: 18px;
+  width: auto;
+  box-shadow: 0 18px 46px rgba(68, 18, 26, 0.32);
+}
+
+.score-list,
+.history-list {
+  display: grid;
+  gap: 10px;
+}
+
+.score-row,
+.guess-row {
+  display: grid;
+  grid-template-columns: 2rem 1fr auto;
+  align-items: center;
+  gap: 10px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.48);
+  padding: 12px;
+}
+
+.score-row span {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  background: #241513;
+  color: #fff4e4;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-weight: 900;
+}
+
+.guess-row {
+  grid-template-columns: 1fr auto;
+  margin-top: 8px;
+}
+
+.history-round {
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.42);
+  padding: 14px;
+}
+
+.result-line {
+  border-radius: 18px;
+  background: #f6d5a3;
+  padding: 12px;
+}
+
+@media (min-width: 760px) {
+  .shell {
+    padding: 32px;
+  }
+
+  .grid {
+    grid-template-columns: 1.15fr 1fr;
+  }
+
+  .grid .card:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .workspace {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .status-card,
+  .host-card {
+    grid-column: 1 / -1;
+  }
+
+  .sticky-action {
+    position: static;
+    width: 100%;
+    box-shadow: none;
+  }
 }
