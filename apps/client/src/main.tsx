@@ -498,7 +498,7 @@ function HostPanel({
   return (
     <article className="card host-card">
       <p className="eyebrow">Host controls</p>
-      <h2>Run the table</h2>
+      <h2>Run the tasting</h2>
       {canStartRound && (
         <button className="primary" disabled={busy} onClick={onStartRound}>
           {round ? "Start next round" : "Start first round"}
@@ -570,13 +570,13 @@ function ParticipantPanel({
   return (
     <article className="card">
       <p className="eyebrow">Playing as {participant.name}</p>
-      <h2>{canGuess ? "Pick one varietal" : "Your table state"}</h2>
+      <h2>{canGuess ? "Pick one varietal" : "Your status"}</h2>
       {round?.status === "revealed" && (
         <p className="result-line">
           Correct answer: <strong>{varietalName(allVarietals, round.correctVarietalId)}</strong>
         </p>
       )}
-      {hasLockedGuess && round?.status !== "revealed" && <p>Your guess is locked. Waiting for the table.</p>}
+      {hasLockedGuess && round?.status !== "revealed" && <p>Guess locked. Waiting for others.</p>}
       {canGuess && (
         <>
           <label>
