@@ -16,7 +16,7 @@ import {
 } from "./api";
 import "./styles.css";
 
-const apiBaseUrl = import.meta.env.VITE_API_URL ?? "http://localhost:4000";
+const apiBaseUrl = import.meta.env.VITE_API_URL ?? undefined;
 
 interface ParticipantSession {
   id: string;

@@ -1,6 +1,6 @@
 import type { TastingSummary, VarietalSummary } from "@wine-sock/shared";
 
-const apiBaseUrl = import.meta.env.VITE_API_URL ?? "http://localhost:4000";
+const apiBaseUrl = import.meta.env.VITE_API_URL ?? "";
 
 interface ApiErrorBody {
   error?: string;
