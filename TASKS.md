@@ -16,11 +16,11 @@
 
 ## Vertical Slice 3: Backend API And Realtime Events
 
-- [ ] Implement tasting creation and join code generation.
-- [ ] Implement participant join with session tokens.
-- [ ] Implement round lifecycle endpoints.
-- [ ] Implement guess locking and reveal flow.
-- [ ] Add Socket.IO rooms and tasting update events.
+- [x] Implement tasting creation and join code generation.
+- [x] Implement participant join with session tokens.
+- [x] Implement round lifecycle endpoints.
+- [x] Implement guess locking and reveal flow.
+- [x] Add Socket.IO rooms and tasting update events.
 
 ## Vertical Slice 4: Phone-First React App
 

@@ -1,28 +1,31 @@
-import cors from "cors";
-import express from "express";
 import { createServer } from "node:http";
 import { Server } from "socket.io";
+import { createApp } from "./app.js";
+import { tastingRoom } from "./api/realtime.js";
 
 const port = Number(process.env.PORT ?? 4000);
 const clientOrigin = process.env.CLIENT_ORIGIN ?? "http://localhost:5173";
 
-const app = express();
-app.use(cors({ origin: clientOrigin }));
-app.use(express.json());
-
-app.get("/api/health", (_request, response) => {
-  response.json({ ok: true, service: "wine-sock" });
-});
-
-const httpServer = createServer(app);
+const httpServer = createServer();
 const io = new Server(httpServer, {
   cors: {
     origin: clientOrigin,
   },
 });
 
+const app = createApp(io);
+httpServer.on("request", app);
+
 io.on("connection", (socket) => {
   socket.emit("connected", { socketId: socket.id });
+
+  socket.on("tasting:join", ({ code }: { code?: string }) => {
+    if (!code) {
+      return;
+    }
+
+    socket.join(tastingRoom(code.trim().toUpperCase()));
+  });
 });
 
 httpServer.listen(port, () => {

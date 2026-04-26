@@ -20,7 +20,7 @@ export interface ParticipantSummary {
 
 export interface GuessSummary {
   participantId: string;
-  varietalId: string;
+  varietalId: string | null;
   lockedAt: string;
   isCorrect: boolean | null;
 }
