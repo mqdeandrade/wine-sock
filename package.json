@@ -7,16 +7,21 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "concurrently -n server,client -c green,blue \"npm run dev --workspace=apps/server\" \"npm run dev --workspace=apps/client\"",
+    "dev": "dotenv -e .env -- concurrently -n server,client -c green,blue \"npm run dev --workspace=apps/server\" \"npm run dev --workspace=apps/client\"",
     "build": "npm run build --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
+    "db:up": "docker compose up -d db",
+    "db:down": "docker compose down",
+    "db:reset": "docker compose down -v && docker compose up -d --wait db && npm run prisma:migrate && npm run db:seed",
+    "db:setup": "docker compose up -d --wait db && npm run prisma:migrate && npm run db:seed",
     "prisma:generate": "npm run prisma:generate --workspace=apps/server",
-    "prisma:migrate": "npm run prisma:migrate --workspace=apps/server",
-    "db:seed": "npm run db:seed --workspace=apps/server"
+    "prisma:migrate": "dotenv -e .env -- npm run prisma:migrate --workspace=apps/server",
+    "db:seed": "dotenv -e .env -- npm run db:seed --workspace=apps/server"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",
+    "dotenv-cli": "^11.0.0",
     "typescript": "^5.8.3"
   }
 }

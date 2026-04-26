@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: wine-sock-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: wine_sock
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - wine-sock-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d wine_sock"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  wine-sock-db:

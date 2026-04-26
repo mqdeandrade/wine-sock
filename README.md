@@ -6,13 +6,32 @@ A phone-first web app for running blind wine tasting nights.
 
 ```sh
 npm install
-npm run prisma:generate
-npm run prisma:migrate
-npm run db:seed
+cp .env.example .env
+npm run db:setup
 npm run dev
 ```
 
-The server expects `DATABASE_URL` to point at PostgreSQL. Copy `.env.example` to `.env` and adjust the URL for your local database before running migrations.
+The server expects `DATABASE_URL` to point at PostgreSQL. The default `.env.example` values match the Docker Compose database.
+
+## Local Database
+
+Start PostgreSQL, run migrations, and seed varietals:
+
+```sh
+npm run db:setup
+```
+
+Useful database commands:
+
+```sh
+npm run db:up
+npm run prisma:migrate
+npm run db:seed
+npm run db:down
+npm run db:reset
+```
+
+`db:reset` deletes the local Docker volume, recreates the database, runs migrations, and seeds varietals.
 
 The app is organized as an npm workspace:
 
