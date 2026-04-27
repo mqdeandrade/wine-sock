@@ -8,12 +8,12 @@
 
 ## Invite Links And Session Restore
 
-- [ ] Tapping/clicking session code copies a join link.
-- [ ] Opening `/?code=SESSION` loads the tasting instead of only prefilling the landing form.
-- [ ] New attendee opening invite link sees name prompt.
-- [ ] Existing attendee opening invite link in same browser restores their participant session.
-- [ ] Host refreshing `/?code=SESSION` restores host controls from local storage.
-- [ ] Different browser opening host invite link does not get host controls.
+- [x] Tapping/clicking session code copies a join link.
+- [x] Opening `/?code=SESSION` loads the tasting instead of only prefilling the landing form.
+- [x] New attendee opening invite link sees name prompt.
+- [x] Existing attendee opening invite link in same browser restores their participant session.
+- [x] Host refreshing `/?code=SESSION` restores host controls from local storage.
+- [x] Different browser opening host invite link does not get host controls.
 
 ## Joining
 
