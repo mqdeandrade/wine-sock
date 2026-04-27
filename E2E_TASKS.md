@@ -54,13 +54,13 @@
 
 ## History
 
-- [ ] History rounds are newest-first.
-- [ ] Only the newest history round is open by default.
-- [ ] Older rounds are collapsed by default.
-- [ ] Expanding a round shows each participant guess.
-- [ ] Missed guesses show both guessed varietal and correct answer.
-- [ ] No-guess participants show `No guess`.
-- [ ] Correct guesses show guessed varietal and `Correct`.
+- [x] History rounds are newest-first.
+- [x] Only the newest history round is open by default.
+- [x] Older rounds are collapsed by default.
+- [x] Expanding a round shows each participant guess.
+- [x] Missed guesses show both guessed varietal and correct answer.
+- [x] No-guess participants show `No guess`.
+- [x] Correct guesses show guessed varietal and `Correct`.
 
 ## Leaderboard
 
