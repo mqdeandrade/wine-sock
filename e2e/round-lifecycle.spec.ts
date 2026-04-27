@@ -102,6 +102,7 @@ test("round automatically awaits host answer when everyone has guessed", async (
   const joined = await joinViaApi(page, code, `Solo ${code}`);
 
   await page.getByRole("button", { name: "Start first round" }).click();
+  await expect(page.getByRole("heading", { name: "Round 1" })).toBeVisible();
   const roundId = await latestRoundId(page, code);
   await lockGuessViaApi(page, roundId, joined);
 

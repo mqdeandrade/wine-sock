@@ -46,6 +46,7 @@ test("host reveals answer, leaderboard updates, and next round can start", async
   const missed = await joinViaApi(page, code, `Missed ${code}`);
 
   await page.getByRole("button", { name: "Start first round" }).click();
+  await expect(page.getByRole("heading", { name: "Round 1" })).toBeVisible();
   const roundId = await latestRoundId(page, code);
   await lockGuessViaApi(page, roundId, correct, "chardonnay");
   await lockGuessViaApi(page, roundId, missed, "pinotage");
