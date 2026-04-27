@@ -47,10 +47,10 @@
 
 ## Late Join Behavior
 
-- [ ] If someone joins during an active guessing round, they are shown as outstanding.
-- [ ] The active round waits for the late joiner guess unless host ends early.
-- [ ] Late joiner can guess in the active round.
-- [ ] Late joiner shows `No guess` for already revealed earlier rounds.
+- [x] If someone joins during an active guessing round, they are shown as outstanding.
+- [x] The active round waits for the late joiner guess unless host ends early.
+- [x] Late joiner can guess in the active round.
+- [x] Late joiner shows `No guess` for already revealed earlier rounds.
 
 ## History
 
