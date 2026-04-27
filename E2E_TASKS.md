@@ -85,7 +85,7 @@
 
 ## Mobile UX Checks
 
-- [ ] Main attendee guessing flow works at mobile viewport.
-- [ ] Host answer picker is usable at mobile viewport.
-- [ ] Selected card highlight is not clipped.
-- [ ] Waiting list remains compact with many attendees.
+- [x] Main attendee guessing flow works at mobile viewport.
+- [x] Host answer picker is usable at mobile viewport.
+- [x] Selected card highlight is not clipped.
+- [x] Waiting list remains compact with many attendees.
