@@ -1,22 +1,20 @@
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { io, type Socket } from "socket.io-client";
 import type { RoundSummary, TastingSummary, VarietalSummary } from "@wine-sock/shared";
 import {
   closeGuessing,
   createTasting,
   endTasting,
   fetchTasting,
-  fetchVarietals,
   joinTasting,
   lockGuess,
   revealRound,
   startRound,
   type JoinTastingResponse,
 } from "./api";
+import { useAsyncAction, useTastingSocket, useVarietals } from "./hooks";
 import "./styles.css";
 
-const apiBaseUrl = import.meta.env.VITE_API_URL ?? undefined;
 const waitingListVisibleLimit = 4;
 
 interface ParticipantSession {
@@ -130,7 +128,8 @@ async function copyTextToClipboard(text: string) {
 
 function App() {
   const [inviteCode] = useState(initialJoinCode);
-  const [varietals, setVarietals] = useState<VarietalSummary[]>([]);
+  const { varietals, error: varietalsError } = useVarietals();
+  const { busy, error, run, setError } = useAsyncAction();
   const [tasting, setTasting] = useState<TastingSummary | null>(null);
   const [hostToken, setHostToken] = useState<string | null>(null);
   const [participant, setParticipant] = useState<ParticipantSession | null>(null);
@@ -142,10 +141,8 @@ function App() {
   const [filter, setFilter] = useState("");
   const [answerFilter, setAnswerFilter] = useState("");
   const [copyStatus, setCopyStatus] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [inviteLoading, setInviteLoading] = useState(Boolean(inviteCode));
   const [inviteFailed, setInviteFailed] = useState(false);
-  const [pendingActions, setPendingActions] = useState(0);
 
   const round = latestRound(tasting);
   const isHost = Boolean(tasting && hostToken);
@@ -157,13 +154,7 @@ function App() {
   );
   const filteredVarietals = varietals.filter((varietal) => matchesVarietalSearch(varietal, filter));
   const answerVarietals = varietals.filter((varietal) => matchesVarietalSearch(varietal, answerFilter));
-  const busy = pendingActions > 0;
-
-  useEffect(() => {
-    fetchVarietals()
-      .then(({ varietals: fetchedVarietals }) => setVarietals(fetchedVarietals))
-      .catch((caughtError: unknown) => setError((caughtError as Error).message));
-  }, []);
+  const visibleError = error ?? varietalsError;
 
   useEffect(() => {
     if (!inviteCode) {
@@ -173,21 +164,7 @@ function App() {
     void handleOpenInvite();
   }, [inviteCode]);
 
-  useEffect(() => {
-    if (!tasting) {
-      return;
-    }
-
-    const socket: Socket = io(apiBaseUrl);
-    socket.emit("tasting:join", { code: tasting.code });
-    socket.on("tasting:updated", (updatedTasting: TastingSummary) => {
-      setTasting(updatedTasting);
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, [tasting?.code]);
+  useTastingSocket(tasting?.code ?? null, setTasting);
 
   useEffect(() => {
     setSelectedVarietalId("");
@@ -195,18 +172,6 @@ function App() {
     setAnswerVarietalId("");
     setAnswerFilter("");
   }, [round?.id]);
-
-  async function run(action: () => Promise<void>) {
-    setPendingActions((count) => count + 1);
-    setError(null);
-    try {
-      await action();
-    } catch (caughtError) {
-      setError((caughtError as Error).message);
-    } finally {
-      setPendingActions((count) => Math.max(0, count - 1));
-    }
-  }
 
   function setCurrentTastingUrl(code: string) {
     window.history.replaceState(null, "", buildJoinLink(code));
@@ -357,9 +322,9 @@ function App() {
         )}
       </section>
 
-      {error && (
+      {visibleError && (
         <div className="error" role="alert">
-          {error}
+          {visibleError}
         </div>
       )}
       {copyStatus && (

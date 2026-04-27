@@ -14,5 +14,5 @@
 
 ## Structure
 
-- [ ] Extract reusable hooks for async actions, varietal loading, and tasting sockets.
-- [ ] Keep existing E2E coverage passing after the refactor.
+- [x] Extract reusable hooks for async actions, varietal loading, and tasting sockets.
+- [x] Keep existing E2E coverage passing after the refactor.
