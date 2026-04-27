@@ -25,16 +25,16 @@
 
 ## Round Lifecycle
 
-- [ ] Host can start first round.
-- [ ] Attendees see searchable varietal picker while round is guessing.
-- [ ] Guess can be searched by varietal name, tasting note, descriptor, or region.
-- [ ] Attendee can lock one guess.
-- [ ] Locked attendee cannot change their guess.
-- [ ] Outstanding guessers list updates after each guess.
-- [ ] Outstanding guessers list collapses to `+N more` after threshold.
-- [ ] Round automatically moves to awaiting answer when everyone has guessed.
-- [ ] Host can end guessing early.
-- [ ] Attendees who do not guess before early close show no guess.
+- [x] Host can start first round.
+- [x] Attendees see searchable varietal picker while round is guessing.
+- [x] Guess can be searched by varietal name, tasting note, descriptor, or region.
+- [x] Attendee can lock one guess.
+- [x] Locked attendee cannot change their guess.
+- [x] Outstanding guessers list updates after each guess.
+- [x] Outstanding guessers list collapses to `+N more` after threshold.
+- [x] Round automatically moves to awaiting answer when everyone has guessed.
+- [x] Host can end guessing early.
+- [x] Attendees who do not guess before early close show no guess.
 
 ## Host Answer / Reveal
 
