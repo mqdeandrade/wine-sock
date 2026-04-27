@@ -17,11 +17,11 @@
 
 ## Joining
 
-- [ ] Attendee can join lobby with code and name.
-- [ ] Duplicate attendee name is rejected.
-- [ ] Attendee can join after tasting has started.
-- [ ] Attendee cannot join after tasting is completed.
-- [ ] Late attendee appears in participant/leaderboard state.
+- [x] Attendee can join lobby with code and name.
+- [x] Duplicate attendee name is rejected.
+- [x] Attendee can join after tasting has started.
+- [x] Attendee cannot join after tasting is completed.
+- [x] Late attendee appears in participant/leaderboard state.
 
 ## Round Lifecycle
 
