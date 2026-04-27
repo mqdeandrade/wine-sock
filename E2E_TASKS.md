@@ -70,10 +70,10 @@
 
 ## Completion
 
-- [ ] Host can end tasting.
-- [ ] Completed tasting prevents starting new rounds.
-- [ ] Completed tasting results remain viewable by code.
-- [ ] New attendees cannot join completed tasting.
+- [x] Host can end tasting.
+- [x] Completed tasting prevents starting new rounds.
+- [x] Completed tasting results remain viewable by code.
+- [x] New attendees cannot join completed tasting.
 
 ## Realtime / Multi-Browser
 
