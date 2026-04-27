@@ -77,11 +77,11 @@
 
 ## Realtime / Multi-Browser
 
-- [ ] Host sees attendees join without refresh.
-- [ ] Attendee sees round start without refresh.
-- [ ] Host sees guesses lock without refresh.
-- [ ] Attendees see reveal without refresh.
-- [ ] Leaderboard/history update without refresh after reveal.
+- [x] Host sees attendees join without refresh.
+- [x] Attendee sees round start without refresh.
+- [x] Host sees guesses lock without refresh.
+- [x] Attendees see reveal without refresh.
+- [x] Leaderboard/history update without refresh after reveal.
 
 ## Mobile UX Checks
 
