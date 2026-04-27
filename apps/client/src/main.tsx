@@ -677,6 +677,8 @@ function RoundHistory({
   tasting: TastingSummary;
   varietals: VarietalSummary[];
 }) {
+  const roundsNewestFirst = [...tasting.rounds].reverse();
+
   return (
     <article className="card">
       <p className="eyebrow">History</p>
@@ -684,40 +686,45 @@ function RoundHistory({
         <p>No rounds yet.</p>
       ) : (
         <div className="history-list">
-          {tasting.rounds.map((round) => (
-            <section className="history-round" key={round.id}>
-              <h3>Round {round.roundNumber}</h3>
-              <p>
-                {round.status === "revealed"
-                  ? varietalName(varietals, round.correctVarietalId)
-                  : round.status.replace("_", " ")}
-              </p>
-              {round.status === "revealed" &&
-                round.guesses.map((guess) => {
-                  const participant = tasting.participants.find((entry) => entry.id === guess.participantId);
-                  const guessedVarietal = varietalName(varietals, guess.varietalId);
-                  const correctVarietal = varietalName(varietals, round.correctVarietalId);
-                  return (
-                    <div className="guess-row" key={`${round.id}-${guess.participantId}`}>
-                      <div>
-                        <strong>{participant?.name ?? "Unknown"}</strong>
-                        <p>
-                          Guessed <b>{guessedVarietal}</b>
-                        </p>
-                        {!guess.isCorrect && (
+          {roundsNewestFirst.map((round, index) => {
+            const correctVarietal = varietalName(varietals, round.correctVarietalId);
+            return (
+              <details className="history-round" key={round.id} open={index === 0}>
+                <summary>
+                  <span>
+                    <strong>Round {round.roundNumber}</strong>
+                    <small>
+                      {round.status === "revealed" ? correctVarietal : round.status.replace("_", " ")}
+                    </small>
+                  </span>
+                  <b>{round.status === "revealed" ? `${round.guesses.length} guesses` : "In progress"}</b>
+                </summary>
+                {round.status === "revealed" &&
+                  round.guesses.map((guess) => {
+                    const participant = tasting.participants.find((entry) => entry.id === guess.participantId);
+                    const guessedVarietal = varietalName(varietals, guess.varietalId);
+                    return (
+                      <div className="guess-row" key={`${round.id}-${guess.participantId}`}>
+                        <div>
+                          <strong>{participant?.name ?? "Unknown"}</strong>
                           <p>
-                            Correct answer was <b>{correctVarietal}</b>
+                            Guessed <b>{guessedVarietal}</b>
                           </p>
-                        )}
+                          {!guess.isCorrect && (
+                            <p>
+                              Correct answer was <b>{correctVarietal}</b>
+                            </p>
+                          )}
+                        </div>
+                        <strong className={guess.isCorrect ? "result-correct" : "result-missed"}>
+                          {guess.isCorrect ? "Correct" : "Missed"}
+                        </strong>
                       </div>
-                      <strong className={guess.isCorrect ? "result-correct" : "result-missed"}>
-                        {guess.isCorrect ? "Correct" : "Missed"}
-                      </strong>
-                    </div>
-                  );
-                })}
-            </section>
-          ))}
+                    );
+                  })}
+              </details>
+            );
+          })}
         </div>
       )}
     </article>

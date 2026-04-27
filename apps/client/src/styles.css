@@ -394,6 +394,41 @@ h3 {
   padding: 14px;
 }
 
+.history-round summary {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.history-round summary::-webkit-details-marker {
+  display: none;
+}
+
+.history-round summary span {
+  display: grid;
+  gap: 4px;
+}
+
+.history-round summary strong {
+  font-size: 1.2rem;
+}
+
+.history-round summary small {
+  color: #5a3830;
+  font-size: 1rem;
+}
+
+.history-round summary > b {
+  color: #84232d;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.78rem;
+  text-align: right;
+  text-transform: uppercase;
+}
+
 .result-line {
   border-radius: 18px;
   background: #f6d5a3;
