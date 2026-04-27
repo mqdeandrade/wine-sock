@@ -1,4 +1,4 @@
-import type { TastingSummary, VarietalSummary } from "@wine-sock/shared";
+import type { RoundSummary, TastingSummary, VarietalSummary } from "@wine-sock/shared";
 
 const apiBaseUrl = import.meta.env.VITE_API_URL ?? "";
 
@@ -67,7 +67,7 @@ export function joinTasting(code: string, name: string) {
 }
 
 export function startRound(tastingId: string, hostToken: string) {
-  return request<{ round: unknown }>(`/api/tastings/${tastingId}/rounds`, {
+  return request<{ round: RoundSummary }>(`/api/tastings/${tastingId}/rounds`, {
     method: "POST",
     body: JSON.stringify({ hostToken }),
   });
@@ -86,14 +86,14 @@ export function lockGuess(
 }
 
 export function closeGuessing(roundId: string, hostToken: string) {
-  return request<{ round: unknown }>(`/api/rounds/${roundId}/close`, {
+  return request<{ round: RoundSummary }>(`/api/rounds/${roundId}/close`, {
     method: "POST",
     body: JSON.stringify({ hostToken }),
   });
 }
 
 export function revealRound(roundId: string, hostToken: string, correctVarietalId: string) {
-  return request<{ round: unknown }>(`/api/rounds/${roundId}/reveal`, {
+  return request<{ round: RoundSummary }>(`/api/rounds/${roundId}/reveal`, {
     method: "POST",
     body: JSON.stringify({ hostToken, correctVarietalId }),
   });

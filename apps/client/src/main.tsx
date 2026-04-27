@@ -34,8 +34,27 @@ function hostStorageKey(code: string) {
 }
 
 function loadParticipantSession(code: string): ParticipantSession | null {
-  const raw = localStorage.getItem(participantStorageKey(code));
-  return raw ? (JSON.parse(raw) as ParticipantSession) : null;
+  const key = participantStorageKey(code);
+  const raw = localStorage.getItem(key);
+  if (!raw) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(raw) as Partial<ParticipantSession>;
+    if (
+      typeof parsed.id === "string" &&
+      typeof parsed.name === "string" &&
+      typeof parsed.sessionToken === "string"
+    ) {
+      return parsed as ParticipantSession;
+    }
+  } catch {
+    // Ignore invalid saved sessions; the user can rejoin with their name.
+  }
+
+  localStorage.removeItem(key);
+  return null;
 }
 
 function saveParticipantSession(code: string, joined: JoinTastingResponse) {
@@ -126,7 +145,7 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [inviteLoading, setInviteLoading] = useState(Boolean(inviteCode));
   const [inviteFailed, setInviteFailed] = useState(false);
-  const [busy, setBusy] = useState(false);
+  const [pendingActions, setPendingActions] = useState(0);
 
   const round = latestRound(tasting);
   const isHost = Boolean(tasting && hostToken);
@@ -138,6 +157,7 @@ function App() {
   );
   const filteredVarietals = varietals.filter((varietal) => matchesVarietalSearch(varietal, filter));
   const answerVarietals = varietals.filter((varietal) => matchesVarietalSearch(varietal, answerFilter));
+  const busy = pendingActions > 0;
 
   useEffect(() => {
     fetchVarietals()
@@ -169,15 +189,22 @@ function App() {
     };
   }, [tasting?.code]);
 
+  useEffect(() => {
+    setSelectedVarietalId("");
+    setFilter("");
+    setAnswerVarietalId("");
+    setAnswerFilter("");
+  }, [round?.id]);
+
   async function run(action: () => Promise<void>) {
-    setBusy(true);
+    setPendingActions((count) => count + 1);
     setError(null);
     try {
       await action();
     } catch (caughtError) {
       setError((caughtError as Error).message);
     } finally {
-      setBusy(false);
+      setPendingActions((count) => Math.max(0, count - 1));
     }
   }
 
@@ -330,8 +357,16 @@ function App() {
         )}
       </section>
 
-      {error && <div className="error">{error}</div>}
-      {copyStatus && <div className="notice">{copyStatus}</div>}
+      {error && (
+        <div className="error" role="alert">
+          {error}
+        </div>
+      )}
+      {copyStatus && (
+        <div className="notice" role="status">
+          {copyStatus}
+        </div>
+      )}
 
       {!tasting && inviteCode ? (
         <section className="grid">
@@ -570,6 +605,7 @@ function HostPanel({
                 className={answerVarietalId === varietal.id ? "answer-option selected" : "answer-option"}
                 key={varietal.id}
                 type="button"
+                aria-pressed={answerVarietalId === varietal.id}
                 onClick={() => onAnswerChange(varietal.id)}
               >
                 <span>
@@ -658,6 +694,8 @@ function ParticipantPanel({
               <button
                 className={selectedVarietalId === varietal.id ? "varietal selected" : "varietal"}
                 key={varietal.id}
+                type="button"
+                aria-pressed={selectedVarietalId === varietal.id}
                 onClick={() => onSelectVarietal(varietal.id)}
               >
                 <span>
