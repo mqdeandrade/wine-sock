@@ -55,6 +55,15 @@ function guessCount(round: RoundSummary | null) {
   return round?.guesses.length ?? 0;
 }
 
+function outstandingGuessers(tasting: TastingSummary, round: RoundSummary | null) {
+  if (!round || round.status !== "guessing") {
+    return [];
+  }
+
+  const guessedParticipantIds = new Set(round.guesses.map((guess) => guess.participantId));
+  return tasting.participants.filter((entry) => !guessedParticipantIds.has(entry.id));
+}
+
 function varietalName(varietals: VarietalSummary[], varietalId: string | null) {
   return varietals.find((varietal) => varietal.id === varietalId)?.name ?? "Unknown";
 }
@@ -120,6 +129,7 @@ function App() {
 
   const round = latestRound(tasting);
   const isHost = Boolean(tasting && hostToken);
+  const waitingFor = tasting ? outstandingGuessers(tasting, round) : [];
   const hasLockedGuess = Boolean(
     participant && round?.guesses.some((guess) => guess.participantId === participant.id),
   );
@@ -405,6 +415,16 @@ function App() {
                   ? `${guessCount(round)} of ${tasting.participants.length} guesses locked`
                   : `${tasting.participants.length} attendees joined`}
               </p>
+              {waitingFor.length > 0 && (
+                <div className="waiting-list">
+                  <span>Waiting for</span>
+                  <div>
+                    {waitingFor.map((entry) => (
+                      <b key={entry.id}>{entry.name}</b>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
             <button
               className="ghost"
