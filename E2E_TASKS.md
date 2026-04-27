@@ -38,12 +38,12 @@
 
 ## Host Answer / Reveal
 
-- [ ] Host answer picker is searchable.
-- [ ] Host can select correct varietal from large cards.
-- [ ] Reveal is disabled until a correct varietal is selected.
-- [ ] Revealed round shows correct/incorrect state to attendees.
-- [ ] Leaderboard updates after reveal.
-- [ ] Host can start another round after reveal.
+- [x] Host answer picker is searchable.
+- [x] Host can select correct varietal from large cards.
+- [x] Reveal is disabled until a correct varietal is selected.
+- [x] Revealed round shows correct/incorrect state to attendees.
+- [x] Leaderboard updates after reveal.
+- [x] Host can start another round after reveal.
 
 ## Late Join Behavior
 
