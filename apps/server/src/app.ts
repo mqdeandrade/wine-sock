@@ -176,7 +176,7 @@ export function createApp(io: Server) {
       }
 
       if (!canJoinTasting(tasting.status.toLowerCase() as "lobby" | "active" | "completed")) {
-        throw new HttpError(409, "This tasting has already started.");
+        throw new HttpError(409, "This tasting has already ended.");
       }
 
       const sessionToken = createSessionToken();
@@ -316,7 +316,9 @@ export function createApp(io: Server) {
           const existingGuesses = await tx.guess.findMany({ where: { roundId: round.id } });
           const allGuesses = [...existingGuesses, guess];
           const shouldClose = shouldCloseGuessing(
-            tasting.participants.map((existingParticipant) => existingParticipant.id),
+            tasting.participants
+              .filter((existingParticipant) => existingParticipant.joinedAt <= round.startedAt)
+              .map((existingParticipant) => existingParticipant.id),
             allGuesses,
           );
 

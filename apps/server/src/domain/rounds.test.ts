@@ -7,9 +7,9 @@ import {
 } from "./rounds.js";
 
 describe("round domain helpers", () => {
-  it("only allows joining during the lobby", () => {
+  it("allows joining until the tasting is completed", () => {
     expect(canJoinTasting("lobby")).toBe(true);
-    expect(canJoinTasting("active")).toBe(false);
+    expect(canJoinTasting("active")).toBe(true);
     expect(canJoinTasting("completed")).toBe(false);
   });
 

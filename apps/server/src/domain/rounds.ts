@@ -11,7 +11,7 @@ export interface ScoredGuess extends GuessForScoring {
 }
 
 export function canJoinTasting(status: "lobby" | "active" | "completed") {
-  return status === "lobby";
+  return status !== "completed";
 }
 
 export function nextRoundNumber(existingRoundNumbers: number[]) {

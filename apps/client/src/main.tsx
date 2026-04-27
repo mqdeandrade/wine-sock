@@ -62,7 +62,10 @@ function outstandingGuessers(tasting: TastingSummary, round: RoundSummary | null
   }
 
   const guessedParticipantIds = new Set(round.guesses.map((guess) => guess.participantId));
-  return tasting.participants.filter((entry) => !guessedParticipantIds.has(entry.id));
+  const roundStartedAt = new Date(round.startedAt).getTime();
+  return tasting.participants.filter(
+    (entry) => new Date(entry.joinedAt).getTime() <= roundStartedAt && !guessedParticipantIds.has(entry.id),
+  );
 }
 
 function varietalName(varietals: VarietalSummary[], varietalId: string | null) {
@@ -477,7 +480,7 @@ function App() {
             />
           )}
 
-          {!isHost && !participant && tasting.status === "lobby" && (
+          {!isHost && !participant && tasting.status !== "completed" && (
             <article className="card">
               <p className="eyebrow">Join {tasting.code}</p>
               <h2>Join this tasting</h2>
@@ -491,11 +494,11 @@ function App() {
             </article>
           )}
 
-          {!isHost && !participant && tasting.status !== "lobby" && (
+          {!isHost && !participant && tasting.status === "completed" && (
             <article className="card">
               <p className="eyebrow">Invite closed</p>
-              <h2>This tasting has already started</h2>
-              <p>New attendees can only join while the tasting is still in the lobby.</p>
+              <h2>This tasting has ended</h2>
+              <p>New attendees can only join while the tasting is still running.</p>
             </article>
           )}
 
@@ -724,24 +727,30 @@ function RoundHistory({
                   <b>{round.status === "revealed" ? `${round.guesses.length} guesses` : "In progress"}</b>
                 </summary>
                 {round.status === "revealed" &&
-                  round.guesses.map((guess) => {
-                    const participant = tasting.participants.find((entry) => entry.id === guess.participantId);
-                    const guessedVarietal = varietalName(varietals, guess.varietalId);
+                  tasting.participants.map((participant) => {
+                    const guess = round.guesses.find((entry) => entry.participantId === participant.id);
+                    const guessedVarietal = guess ? varietalName(varietals, guess.varietalId) : null;
                     return (
-                      <div className="guess-row" key={`${round.id}-${guess.participantId}`}>
+                      <div className="guess-row" key={`${round.id}-${participant.id}`}>
                         <div>
-                          <strong>{participant?.name ?? "Unknown"}</strong>
-                          <p>
-                            Guessed <b>{guessedVarietal}</b>
-                          </p>
-                          {!guess.isCorrect && (
-                            <p>
-                              Correct answer was <b>{correctVarietal}</b>
-                            </p>
+                          <strong>{participant.name}</strong>
+                          {guess ? (
+                            <>
+                              <p>
+                                Guessed <b>{guessedVarietal}</b>
+                              </p>
+                              {!guess.isCorrect && (
+                                <p>
+                                  Correct answer was <b>{correctVarietal}</b>
+                                </p>
+                              )}
+                            </>
+                          ) : (
+                            <p>No guess for this round.</p>
                           )}
                         </div>
-                        <strong className={guess.isCorrect ? "result-correct" : "result-missed"}>
-                          {guess.isCorrect ? "Correct" : "Missed"}
+                        <strong className={guess?.isCorrect ? "result-correct" : "result-missed"}>
+                          {guess ? (guess.isCorrect ? "Correct" : "Missed") : "No guess"}
                         </strong>
                       </div>
                     );
