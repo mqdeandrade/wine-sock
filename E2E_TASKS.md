@@ -64,9 +64,9 @@
 
 ## Leaderboard
 
-- [ ] Leaderboard starts aligned at the top beside history on desktop.
-- [ ] Leaderboard scores sort descending.
-- [ ] Participants with no correct guesses remain visible with score `0`.
+- [x] Leaderboard starts aligned at the top beside history on desktop.
+- [x] Leaderboard scores sort descending.
+- [x] Participants with no correct guesses remain visible with score `0`.
 
 ## Completion
 
