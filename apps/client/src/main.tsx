@@ -62,10 +62,7 @@ function outstandingGuessers(tasting: TastingSummary, round: RoundSummary | null
   }
 
   const guessedParticipantIds = new Set(round.guesses.map((guess) => guess.participantId));
-  const roundStartedAt = new Date(round.startedAt).getTime();
-  return tasting.participants.filter(
-    (entry) => new Date(entry.joinedAt).getTime() <= roundStartedAt && !guessedParticipantIds.has(entry.id),
-  );
+  return tasting.participants.filter((entry) => !guessedParticipantIds.has(entry.id));
 }
 
 function varietalName(varietals: VarietalSummary[], varietalId: string | null) {

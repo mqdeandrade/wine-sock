@@ -316,9 +316,7 @@ export function createApp(io: Server) {
           const existingGuesses = await tx.guess.findMany({ where: { roundId: round.id } });
           const allGuesses = [...existingGuesses, guess];
           const shouldClose = shouldCloseGuessing(
-            tasting.participants
-              .filter((existingParticipant) => existingParticipant.joinedAt <= round.startedAt)
-              .map((existingParticipant) => existingParticipant.id),
+            tasting.participants.map((existingParticipant) => existingParticipant.id),
             allGuesses,
           );
 
