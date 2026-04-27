@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { io, type Socket } from "socket.io-client";
 import type { TastingSummary, VarietalSummary } from "@wine-sock/shared";
-import { fetchVarietals } from "./api";
+import { fetchTasting, fetchVarietals } from "./api";
 
 const apiBaseUrl = import.meta.env.VITE_API_URL ?? undefined;
 
@@ -51,11 +51,35 @@ export function useTastingSocket(
       return;
     }
 
+    const code = tastingCode;
     const socket: Socket = io(apiBaseUrl);
-    socket.emit("tasting:join", { code: tastingCode });
+
+    async function refreshTasting() {
+      try {
+        const { tasting } = await fetchTasting(code);
+        onTastingUpdated(tasting);
+      } catch {
+        // Socket reconnect recovery should not interrupt the active screen.
+      }
+    }
+
+    function joinTastingRoom() {
+      socket.emit("tasting:join", { code });
+      void refreshTasting();
+    }
+
+    function refreshWhenVisible() {
+      if (document.visibilityState === "visible") {
+        void refreshTasting();
+      }
+    }
+
+    socket.on("connect", joinTastingRoom);
     socket.on("tasting:updated", onTastingUpdated);
+    document.addEventListener("visibilitychange", refreshWhenVisible);
 
     return () => {
+      document.removeEventListener("visibilitychange", refreshWhenVisible);
       socket.disconnect();
     };
   }, [tastingCode, onTastingUpdated]);
