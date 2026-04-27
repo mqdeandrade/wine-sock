@@ -17,6 +17,7 @@ import {
 import "./styles.css";
 
 const apiBaseUrl = import.meta.env.VITE_API_URL ?? undefined;
+const waitingListVisibleLimit = 4;
 
 interface ParticipantSession {
   id: string;
@@ -130,6 +131,8 @@ function App() {
   const round = latestRound(tasting);
   const isHost = Boolean(tasting && hostToken);
   const waitingFor = tasting ? outstandingGuessers(tasting, round) : [];
+  const visibleWaitingFor = waitingFor.slice(0, waitingListVisibleLimit);
+  const hiddenWaitingForCount = Math.max(waitingFor.length - visibleWaitingFor.length, 0);
   const hasLockedGuess = Boolean(
     participant && round?.guesses.some((guess) => guess.participantId === participant.id),
   );
@@ -419,9 +422,10 @@ function App() {
                 <div className="waiting-list">
                   <span>Waiting for</span>
                   <div>
-                    {waitingFor.map((entry) => (
+                    {visibleWaitingFor.map((entry) => (
                       <b key={entry.id}>{entry.name}</b>
                     ))}
+                    {hiddenWaitingForCount > 0 && <b>+{hiddenWaitingForCount} more</b>}
                   </div>
                 </div>
               )}
