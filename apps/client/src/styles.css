@@ -106,6 +106,7 @@ h3 {
 .grid,
 .workspace {
   display: grid;
+  align-items: start;
   gap: 14px;
   margin: 0 auto;
   max-width: 980px;
@@ -113,6 +114,7 @@ h3 {
 
 .card {
   display: grid;
+  align-content: start;
   gap: 14px;
   border: 1px solid rgba(69, 35, 28, 0.12);
   border-radius: 30px;
