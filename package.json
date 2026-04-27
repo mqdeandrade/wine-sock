@@ -11,6 +11,7 @@
     "build": "npm run build --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
+    "e2e": "playwright test",
     "db:up": "docker compose up -d db",
     "db:down": "docker compose down",
     "db:reset": "docker compose down -v && docker compose up -d --wait db && npm run prisma:migrate && npm run db:seed",
@@ -20,6 +21,7 @@
     "db:seed": "dotenv -e .env -- npm run db:seed --workspace=apps/server"
   },
   "devDependencies": {
+    "@playwright/test": "^1.59.1",
     "concurrently": "^9.1.2",
     "dotenv-cli": "^11.0.0",
     "typescript": "^5.8.3"
