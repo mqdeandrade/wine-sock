@@ -30,12 +30,19 @@ async function latestRoundId(page: Page, code: string) {
   return body.tasting.rounds.at(-1).id as string;
 }
 
-async function lockGuessViaApi(page: Page, roundId: string, joined: JoinedParticipant, varietalId: string) {
+async function lockGuessViaApi(
+  page: Page,
+  roundId: string,
+  joined: JoinedParticipant,
+  varietalId: string,
+  rating = 8,
+) {
   const response = await page.request.post(`/api/rounds/${roundId}/guesses`, {
     data: {
       participantId: joined.participant.id,
       sessionToken: joined.sessionToken,
       varietalId,
+      rating,
     },
   });
   await expect(response).toBeOK();
@@ -75,6 +82,7 @@ test("active round waits for late joiner and lets them guess", async ({ browser,
 
   await latePage.getByLabel("Search notes").fill("pinotage");
   await latePage.getByRole("button", { name: /Pinotage/i }).click();
+  await latePage.getByRole("group", { name: "Your rating" }).getByRole("button", { name: "8" }).click();
   await latePage.getByRole("button", { name: "Lock guess" }).click();
 
   await expect(page.getByLabel("Search correct varietal")).toBeVisible();
@@ -95,6 +103,7 @@ test("late joiner shows no guess for already revealed earlier rounds", async ({ 
   const latePage = await joinInBrowser(browser, joinLink, code, lateName);
   await latePage.getByLabel("Search notes").fill("chardonnay");
   await latePage.getByRole("button", { name: /Chardonnay/i }).click();
+  await latePage.getByRole("group", { name: "Your rating" }).getByRole("button", { name: "8" }).click();
   await latePage.getByRole("button", { name: "Lock guess" }).click();
 
   const roundOne = page.locator(".history-round").filter({ hasText: "Round 1" });

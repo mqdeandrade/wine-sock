@@ -78,10 +78,11 @@ export function lockGuess(
   participantId: string,
   sessionToken: string,
   varietalId: string,
+  rating: number,
 ) {
   return request<{ guessingClosed: boolean }>(`/api/rounds/${roundId}/guesses`, {
     method: "POST",
-    body: JSON.stringify({ participantId, sessionToken, varietalId }),
+    body: JSON.stringify({ participantId, sessionToken, varietalId, rating }),
   });
 }
 

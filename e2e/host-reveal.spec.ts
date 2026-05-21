@@ -29,12 +29,19 @@ async function latestRoundId(page: Page, code: string) {
   return body.tasting.rounds.at(-1).id as string;
 }
 
-async function lockGuessViaApi(page: Page, roundId: string, joined: JoinedParticipant, varietalId: string) {
+async function lockGuessViaApi(
+  page: Page,
+  roundId: string,
+  joined: JoinedParticipant,
+  varietalId: string,
+  rating = 8,
+) {
   const response = await page.request.post(`/api/rounds/${roundId}/guesses`, {
     data: {
       participantId: joined.participant.id,
       sessionToken: joined.sessionToken,
       varietalId,
+      rating,
     },
   });
   await expect(response).toBeOK();
@@ -48,8 +55,8 @@ test("host reveals answer, leaderboard updates, and next round can start", async
   await page.getByRole("button", { name: "Start first round" }).click();
   await expect(page.getByRole("heading", { name: "Round 1" })).toBeVisible();
   const roundId = await latestRoundId(page, code);
-  await lockGuessViaApi(page, roundId, correct, "chardonnay");
-  await lockGuessViaApi(page, roundId, missed, "pinotage");
+  await lockGuessViaApi(page, roundId, correct, "chardonnay", 9);
+  await lockGuessViaApi(page, roundId, missed, "pinotage", 7);
 
   await expect(page.getByLabel("Search correct varietal")).toBeVisible();
   await expect(page.getByRole("button", { name: "Reveal results" })).toBeDisabled();
@@ -61,9 +68,12 @@ test("host reveals answer, leaderboard updates, and next round can start", async
   await page.getByRole("button", { name: "Reveal results" }).click();
 
   await expect(page.locator(".history-round").first()).toContainText("Chardonnay");
+  await expect(page.locator(".history-round").first()).toContainText("Average 8.0/10");
   await expect(page.locator(".history-round").first()).toContainText(`Correct ${code}`);
+  await expect(page.locator(".history-round").first()).toContainText("Rated 9/10");
   await expect(page.locator(".history-round").first()).toContainText("Correct");
   await expect(page.locator(".history-round").first()).toContainText(`Missed ${code}`);
+  await expect(page.locator(".history-round").first()).toContainText("Rated 7/10");
   await expect(page.locator(".history-round").first()).toContainText("Correct answer was Chardonnay");
 
   const rows = page.locator(".score-row");

@@ -29,12 +29,19 @@ async function latestRoundId(page: Page, code: string) {
   return body.tasting.rounds.at(-1).id as string;
 }
 
-async function lockGuessViaApi(page: Page, roundId: string, joined: JoinedParticipant, varietalId: string) {
+async function lockGuessViaApi(
+  page: Page,
+  roundId: string,
+  joined: JoinedParticipant,
+  varietalId: string,
+  rating = 8,
+) {
   const response = await page.request.post(`/api/rounds/${roundId}/guesses`, {
     data: {
       participantId: joined.participant.id,
       sessionToken: joined.sessionToken,
       varietalId,
+      rating,
     },
   });
   await expect(response).toBeOK();

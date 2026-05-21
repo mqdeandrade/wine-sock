@@ -41,7 +41,7 @@ test("attendee guessing and host answer reveal work at mobile viewport", async (
   const guestPage = await joinInMobileBrowser(browser, joinLink, code, `Mobile ${code}`);
 
   await page.getByRole("button", { name: "Start first round" }).click();
-  await expect(guestPage.getByRole("heading", { name: "Pick one varietal" })).toBeVisible();
+  await expect(guestPage.getByRole("heading", { name: "Pick varietal and score" })).toBeVisible();
 
   await guestPage.getByLabel("Search notes").fill("pinotage");
   await guestPage.getByRole("button", { name: /Pinotage/i }).click();
@@ -49,6 +49,7 @@ test("attendee guessing and host answer reveal work at mobile viewport", async (
     .locator(".varietal.selected")
     .evaluate((element) => getComputedStyle(element).boxShadow);
   expect(selectedCardShadow).toContain("inset");
+  await guestPage.getByRole("group", { name: "Your rating" }).getByRole("button", { name: "8" }).click();
   await guestPage.getByRole("button", { name: "Lock guess" }).click();
 
   await expect(page.getByLabel("Search correct varietal")).toBeVisible();

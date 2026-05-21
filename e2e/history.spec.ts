@@ -29,12 +29,19 @@ async function latestRoundId(page: Page, code: string) {
   return body.tasting.rounds.at(-1).id as string;
 }
 
-async function lockGuessViaApi(page: Page, roundId: string, joined: JoinedParticipant, varietalId: string) {
+async function lockGuessViaApi(
+  page: Page,
+  roundId: string,
+  joined: JoinedParticipant,
+  varietalId: string,
+  rating = 8,
+) {
   const response = await page.request.post(`/api/rounds/${roundId}/guesses`, {
     data: {
       participantId: joined.participant.id,
       sessionToken: joined.sessionToken,
       varietalId,
+      rating,
     },
   });
   await expect(response).toBeOK();
@@ -55,17 +62,17 @@ test("history is newest first, collapsible, and shows correct/missed/no-guess de
   await page.getByRole("button", { name: "Start first round" }).click();
   await expect(page.getByRole("heading", { name: "Round 1" })).toBeVisible();
   const roundOneId = await latestRoundId(page, code);
-  await lockGuessViaApi(page, roundOneId, alice, "cabernet-franc");
-  await lockGuessViaApi(page, roundOneId, ben, "chardonnay");
+  await lockGuessViaApi(page, roundOneId, alice, "cabernet-franc", 9);
+  await lockGuessViaApi(page, roundOneId, ben, "chardonnay", 6);
   await revealCurrentRound(page, "Cabernet Franc");
 
   await page.getByRole("button", { name: "Start next round" }).click();
   await expect(page.getByRole("heading", { name: "Round 2" })).toBeVisible();
   const cara = await joinViaApi(page, code, `Cara ${code}`);
   const roundTwoId = await latestRoundId(page, code);
-  await lockGuessViaApi(page, roundTwoId, alice, "chardonnay");
-  await lockGuessViaApi(page, roundTwoId, ben, "chardonnay");
-  await lockGuessViaApi(page, roundTwoId, cara, "chardonnay");
+  await lockGuessViaApi(page, roundTwoId, alice, "chardonnay", 8);
+  await lockGuessViaApi(page, roundTwoId, ben, "chardonnay", 7);
+  await lockGuessViaApi(page, roundTwoId, cara, "chardonnay", 6);
   await revealCurrentRound(page, "Chardonnay");
 
   const rounds = page.locator(".history-round");
@@ -78,9 +85,12 @@ test("history is newest first, collapsible, and shows correct/missed/no-guess de
   await expect(rounds.nth(1)).toHaveAttribute("open", "");
   await expect(rounds.nth(1)).toContainText(`Alice ${code}`);
   await expect(rounds.nth(1)).toContainText("Guessed Cabernet Franc");
+  await expect(rounds.nth(1)).toContainText("Rated 9/10");
   await expect(rounds.nth(1)).toContainText("Correct");
+  await expect(rounds.nth(1)).toContainText("Average 7.5/10");
   await expect(rounds.nth(1)).toContainText(`Ben ${code}`);
   await expect(rounds.nth(1)).toContainText("Guessed Chardonnay");
+  await expect(rounds.nth(1)).toContainText("Rated 6/10");
   await expect(rounds.nth(1)).toContainText("Correct answer was Cabernet Franc");
   await expect(rounds.nth(1)).toContainText("Missed");
   await expect(rounds.nth(1)).toContainText(`Cara ${code}`);

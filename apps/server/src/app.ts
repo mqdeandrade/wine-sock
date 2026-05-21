@@ -37,6 +37,7 @@ const guessSchema = z.object({
   participantId: z.string().min(1),
   sessionToken: z.string().min(1),
   varietalId: z.string().min(1),
+  rating: z.number().int().min(1).max(10),
 });
 
 const revealSchema = hostActionSchema.extend({
@@ -264,7 +265,7 @@ export function createApp(io: Server) {
   app.post(
     "/api/rounds/:id/guesses",
     asyncHandler(async (request, response) => {
-      const { participantId, sessionToken, varietalId } = guessSchema.parse(request.body);
+      const { participantId, sessionToken, varietalId, rating } = guessSchema.parse(request.body);
       const roundId = routeParam(request.params.id, "id");
 
       const result = await prisma.$transaction(async (tx) => {
@@ -310,6 +311,7 @@ export function createApp(io: Server) {
               roundId: round.id,
               participantId,
               varietalId,
+              rating,
             },
           });
 

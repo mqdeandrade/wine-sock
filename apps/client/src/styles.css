@@ -356,6 +356,42 @@ h3 {
   box-shadow: inset 0 0 0 3px #84232d;
 }
 
+.rating-field {
+  display: grid;
+  gap: 10px;
+  border: 0;
+  margin: 0;
+  padding: 0 0 76px;
+}
+
+.rating-field legend {
+  color: #55342d;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 0;
+}
+
+.rating-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
+.rating-option {
+  min-height: 44px;
+  border: 1px solid rgba(58, 28, 22, 0.14);
+  border-radius: 14px;
+  background: #fff9ef;
+  color: #251715;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-weight: 900;
+}
+
+.rating-option.selected {
+  background: #84232d;
+  color: #fff7ed;
+}
+
 .sticky-action {
   position: fixed;
   right: 18px;
@@ -491,5 +527,9 @@ h3 {
     position: static;
     width: 100%;
     box-shadow: none;
+  }
+
+  .rating-field {
+    padding-bottom: 0;
   }
 }

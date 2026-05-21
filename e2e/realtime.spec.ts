@@ -29,10 +29,12 @@ test("host and attendee views update live through join, guessing, reveal, leader
   await expect(page.locator(".score-row").filter({ hasText: guestName })).toContainText("0");
 
   await page.getByRole("button", { name: "Start first round" }).click();
-  await expect(guestPage.getByRole("heading", { name: "Pick one varietal" })).toBeVisible();
+  await expect(guestPage.getByRole("heading", { name: "Pick varietal and score" })).toBeVisible();
 
   await guestPage.getByLabel("Search notes").fill("pinotage");
   await guestPage.getByRole("button", { name: /Pinotage/i }).click();
+  await expect(page.locator(".history-round").first()).not.toContainText("Average");
+  await guestPage.getByRole("group", { name: "Your rating" }).getByRole("button", { name: "8" }).click();
   await guestPage.getByRole("button", { name: "Lock guess" }).click();
   await expect(page.getByText("1 of 1 guesses locked")).toBeVisible();
   await expect(page.getByLabel("Search correct varietal")).toBeVisible();
@@ -46,5 +48,7 @@ test("host and attendee views update live through join, guessing, reveal, leader
   await expect(page.locator(".score-row").filter({ hasText: guestName })).toContainText("1");
   await expect(page.locator(".history-round").first()).toContainText("Round 1");
   await expect(page.locator(".history-round").first()).toContainText("Guessed Pinotage");
+  await expect(page.locator(".history-round").first()).toContainText("Rated 8/10");
+  await expect(page.locator(".history-round").first()).toContainText("Average 8.0/10");
   await expect(page.locator(".history-round").first()).toContainText("Correct");
 });

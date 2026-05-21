@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  averageRating,
   canJoinTasting,
   nextRoundNumber,
   scoreGuesses,
@@ -50,5 +51,11 @@ describe("round domain helpers", () => {
       { participantId: "alice", varietalId: "riesling", isCorrect: true, points: 1 },
       { participantId: "ben", varietalId: "chardonnay", isCorrect: false, points: 0 },
     ]);
+  });
+
+  it("averages non-null ratings", () => {
+    expect(averageRating([{ rating: 8 }, { rating: null }, { rating: 5 }])).toBe(6.5);
+    expect(averageRating([{ rating: null }])).toBeNull();
+    expect(averageRating([])).toBeNull();
   });
 });

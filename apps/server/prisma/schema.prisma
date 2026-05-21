@@ -74,6 +74,7 @@ model Guess {
   participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
   varietalId    String
   varietal      Varietal    @relation(fields: [varietalId], references: [id])
+  rating        Int?
   lockedAt      DateTime    @default(now())
   isCorrect     Boolean?
 

@@ -10,6 +10,10 @@ export interface ScoredGuess extends GuessForScoring {
   points: 0 | 1;
 }
 
+export interface GuessRating {
+  rating: number | null;
+}
+
 export function canJoinTasting(status: "lobby" | "active" | "completed") {
   return status !== "completed";
 }
@@ -42,6 +46,18 @@ export function scoreGuesses(
       points: isCorrect ? 1 : 0,
     };
   });
+}
+
+export function averageRating(guesses: GuessRating[]) {
+  const ratings = guesses
+    .map((guess) => guess.rating)
+    .filter((rating): rating is number => rating !== null);
+
+  if (ratings.length === 0) {
+    return null;
+  }
+
+  return ratings.reduce((total, rating) => total + rating, 0) / ratings.length;
 }
 
 export function assertRoundCanAcceptGuess(status: RoundStatus) {

@@ -17,6 +17,7 @@ import type {
   VarietalColor,
   VarietalSummary,
 } from "@wine-sock/shared";
+import { averageRating } from "../domain/rounds.js";
 
 export const tastingInclude = {
   participants: { orderBy: { joinedAt: "asc" } },
@@ -65,6 +66,7 @@ function toGuessSummary(guess: Guess, shouldReveal: boolean): GuessSummary {
   return {
     participantId: guess.participantId,
     varietalId: shouldReveal ? guess.varietalId : null,
+    rating: shouldReveal ? guess.rating : null,
     lockedAt: guess.lockedAt.toISOString(),
     isCorrect: shouldReveal ? guess.isCorrect : null,
   };
@@ -82,6 +84,7 @@ function toRoundSummary(round: Round & { guesses: Guess[] }): RoundSummary {
     startedAt: round.startedAt.toISOString(),
     guessingClosedAt: round.guessingClosedAt?.toISOString() ?? null,
     revealedAt: round.revealedAt?.toISOString() ?? null,
+    averageRating: shouldReveal ? averageRating(round.guesses) : null,
     guesses: round.guesses.map((guess) => toGuessSummary(guess, shouldReveal)),
   };
 }

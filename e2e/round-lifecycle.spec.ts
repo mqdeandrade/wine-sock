@@ -35,12 +35,14 @@ async function lockGuessViaApi(
   roundId: string,
   joined: JoinedParticipant,
   varietalId = "pinotage",
+  rating = 8,
 ) {
   const response = await page.request.post(`/api/rounds/${roundId}/guesses`, {
     data: {
       participantId: joined.participant.id,
       sessionToken: joined.sessionToken,
       varietalId,
+      rating,
     },
   });
   await expect(response).toBeOK();
@@ -65,13 +67,15 @@ test("attendee can search varietals and lock one guess", async ({ browser, page 
   await guestPage.getByLabel("Your name").fill(`Search ${code}`);
   await guestPage.getByRole("button", { name: `Join ${code}` }).click();
 
-  await expect(guestPage.getByRole("heading", { name: "Pick one varietal" })).toBeVisible();
+  await expect(guestPage.getByRole("heading", { name: "Pick varietal and score" })).toBeVisible();
   await guestPage.getByLabel("Search notes").fill("coffee");
   await expect(guestPage.getByRole("button", { name: /Pinotage/i })).toBeVisible();
   await guestPage.getByLabel("Search notes").fill("Stellenbosch");
   await expect(guestPage.getByRole("button", { name: /Cabernet Sauvignon/i })).toBeVisible();
   await guestPage.getByLabel("Search notes").fill("pinotage");
   await guestPage.getByRole("button", { name: /Pinotage/i }).click();
+  await expect(guestPage.getByRole("button", { name: "Lock guess" })).toBeDisabled();
+  await guestPage.getByRole("group", { name: "Your rating" }).getByRole("button", { name: "8" }).click();
   await guestPage.getByRole("button", { name: "Lock guess" }).click();
 
   await expect(guestPage.getByText("Guess locked. Waiting for others.")).toBeVisible();

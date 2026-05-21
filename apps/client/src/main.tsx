@@ -86,6 +86,14 @@ function varietalName(varietals: VarietalSummary[], varietalId: string | null) {
   return varietals.find((varietal) => varietal.id === varietalId)?.name ?? "Unknown";
 }
 
+function ratingLabel(rating: number) {
+  return `${rating}/10`;
+}
+
+function averageRatingLabel(rating: number) {
+  return `${rating.toFixed(1)}/10`;
+}
+
 function matchesVarietalSearch(varietal: VarietalSummary, searchTerm: string) {
   const search = searchTerm.trim().toLowerCase();
   if (!search) {
@@ -137,6 +145,7 @@ function App() {
   const [historyCode, setHistoryCode] = useState("");
   const [name, setName] = useState("");
   const [selectedVarietalId, setSelectedVarietalId] = useState("");
+  const [selectedRating, setSelectedRating] = useState<number | null>(null);
   const [answerVarietalId, setAnswerVarietalId] = useState("");
   const [filter, setFilter] = useState("");
   const [answerFilter, setAnswerFilter] = useState("");
@@ -168,6 +177,7 @@ function App() {
 
   useEffect(() => {
     setSelectedVarietalId("");
+    setSelectedRating(null);
     setFilter("");
     setAnswerVarietalId("");
     setAnswerFilter("");
@@ -262,18 +272,19 @@ function App() {
     await run(async () => {
       await startRound(tasting.id, hostToken);
       setSelectedVarietalId("");
+      setSelectedRating(null);
       setAnswerVarietalId("");
       setAnswerFilter("");
     });
   }
 
   async function handleLockGuess() {
-    if (!round || !participant || !selectedVarietalId) {
+    if (!round || !participant || !selectedVarietalId || selectedRating === null) {
       return;
     }
 
     await run(async () => {
-      await lockGuess(round.id, participant.id, participant.sessionToken, selectedVarietalId);
+      await lockGuess(round.id, participant.id, participant.sessionToken, selectedVarietalId, selectedRating);
     });
   }
 
@@ -469,10 +480,12 @@ function App() {
               allVarietals={varietals}
               filter={filter}
               selectedVarietalId={selectedVarietalId}
+              selectedRating={selectedRating}
               hasLockedGuess={hasLockedGuess}
               busy={busy}
               onFilterChange={setFilter}
               onSelectVarietal={setSelectedVarietalId}
+              onSelectRating={setSelectedRating}
               onLockGuess={handleLockGuess}
             />
           )}
@@ -611,10 +624,12 @@ interface ParticipantPanelProps {
   allVarietals: VarietalSummary[];
   filter: string;
   selectedVarietalId: string;
+  selectedRating: number | null;
   hasLockedGuess: boolean;
   busy: boolean;
   onFilterChange: (value: string) => void;
   onSelectVarietal: (value: string) => void;
+  onSelectRating: (value: number) => void;
   onLockGuess: () => void;
 }
 
@@ -626,10 +641,12 @@ function ParticipantPanel({
   allVarietals,
   filter,
   selectedVarietalId,
+  selectedRating,
   hasLockedGuess,
   busy,
   onFilterChange,
   onSelectVarietal,
+  onSelectRating,
   onLockGuess,
 }: ParticipantPanelProps) {
   const canGuess = tasting.status === "active" && round?.status === "guessing" && !hasLockedGuess;
@@ -637,7 +654,7 @@ function ParticipantPanel({
   return (
     <article className="card">
       <p className="eyebrow">Playing as {participant.name}</p>
-      <h2>{canGuess ? "Pick one varietal" : "Your status"}</h2>
+      <h2>{canGuess ? "Pick varietal and score" : "Your status"}</h2>
       {round?.status === "revealed" && (
         <p className="result-line">
           Correct answer: <strong>{varietalName(allVarietals, round.correctVarietalId)}</strong>
@@ -671,7 +688,27 @@ function ParticipantPanel({
               </button>
             ))}
           </div>
-          <button className="primary sticky-action" disabled={busy || !selectedVarietalId} onClick={onLockGuess}>
+          <fieldset className="rating-field">
+            <legend>Your rating</legend>
+            <div className="rating-grid">
+              {Array.from({ length: 10 }, (_, index) => index + 1).map((rating) => (
+                <button
+                  className={selectedRating === rating ? "rating-option selected" : "rating-option"}
+                  key={rating}
+                  type="button"
+                  aria-pressed={selectedRating === rating}
+                  onClick={() => onSelectRating(rating)}
+                >
+                  {rating}
+                </button>
+              ))}
+            </div>
+          </fieldset>
+          <button
+            className="primary sticky-action"
+            disabled={busy || !selectedVarietalId || selectedRating === null}
+            onClick={onLockGuess}
+          >
             Lock guess
           </button>
         </>
@@ -715,13 +752,19 @@ function RoundHistory({
         <div className="history-list">
           {roundsNewestFirst.map((round, index) => {
             const correctVarietal = varietalName(varietals, round.correctVarietalId);
+            const revealedAverage =
+              round.status === "revealed" && round.averageRating !== null
+                ? `Average ${averageRatingLabel(round.averageRating)}`
+                : null;
             return (
               <details className="history-round" key={round.id} open={index === 0}>
                 <summary>
                   <span>
                     <strong>Round {round.roundNumber}</strong>
                     <small>
-                      {round.status === "revealed" ? correctVarietal : round.status.replace("_", " ")}
+                      {round.status === "revealed"
+                        ? [correctVarietal, revealedAverage].filter(Boolean).join(" - ")
+                        : round.status.replace("_", " ")}
                     </small>
                   </span>
                   <b>{round.status === "revealed" ? `${round.guesses.length} guesses` : "In progress"}</b>
@@ -739,6 +782,11 @@ function RoundHistory({
                               <p>
                                 Guessed <b>{guessedVarietal}</b>
                               </p>
+                              {guess.rating !== null && (
+                                <p>
+                                  Rated <b>{ratingLabel(guess.rating)}</b>
+                                </p>
+                              )}
                               {!guess.isCorrect && (
                                 <p>
                                   Correct answer was <b>{correctVarietal}</b>

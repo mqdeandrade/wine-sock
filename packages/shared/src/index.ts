@@ -21,6 +21,7 @@ export interface ParticipantSummary {
 export interface GuessSummary {
   participantId: string;
   varietalId: string | null;
+  rating: number | null;
   lockedAt: string;
   isCorrect: boolean | null;
 }
@@ -33,6 +34,7 @@ export interface RoundSummary {
   startedAt: string;
   guessingClosedAt: string | null;
   revealedAt: string | null;
+  averageRating: number | null;
   guesses: GuessSummary[];
 }
 
